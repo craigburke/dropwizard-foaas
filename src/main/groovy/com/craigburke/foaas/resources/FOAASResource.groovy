@@ -35,14 +35,15 @@ class FOAASResource {
     public FuckOffView fuckYou(@PathParam('type')  String type,
                             @PathParam('name') String name,
                             @PathParam('from') String from) {
+        new FuckOffView(getMessage(type, name, from))
+    }
 
-        def message = getMessage(type, name, from)
-
-        if (!message) {
-            throw new WebApplicationException(Status.NOT_FOUND)
-        }
-
-        new FuckOffView(message)
+    @GET
+    @Path('/{type}/{from}')
+    @Produces(MediaType.TEXT_HTML)
+    public FuckOffView fuckYouToo(@PathParam('type')  String type,
+                               @PathParam('from') String from) {
+        new FuckOffView(getMessage(type, null, from))
     }
 
     @GET
@@ -51,15 +52,17 @@ class FOAASResource {
     public Message fuckYouAsJson(@PathParam('type')  String type,
                                @PathParam('name') String name,
                                @PathParam('from') String from) {
-
-        def message = getMessage(type, name, from)
-
-        if (!message) {
-            throw new WebApplicationException(Status.NOT_FOUND)
-        }
-
-        message
+        getMessage(type, name, from)
     }
+
+    @GET
+    @Path('/{type}/{from}')
+    @Produces(MediaType.APPLICATION_JSON)
+    public Message fuckYouTooAsJson(@PathParam('type')  String type,
+                                 @PathParam('from') String from) {
+        getMessage(type, null, from)
+    }
+
 
     @GET
     @Path('/{type}/{name}/{from}')
@@ -67,19 +70,27 @@ class FOAASResource {
     public String fuckYouAsText(@PathParam('type')  String type,
                               @PathParam('name') String name,
                               @PathParam('from') String from) {
+        getMessage(type, name, from).toString()
+    }
 
-        def message = getMessage(type, name, from)
-
-        if (!message) {
-            throw new WebApplicationException(Status.NOT_FOUND)
-        }
-
-        message.toString()
+    @GET
+    @Path('/{type}/{from}')
+    @Produces(MediaType.TEXT_PLAIN)
+    public String fuckYouTooAsText(@PathParam('type')  String type,
+                                @PathParam('from') String from) {
+        getMessage(type, null, from).toString()
     }
 
 
+
     private Message getMessage(String type, String name, String from ) {
+        int paramCount = name ? 2 : 1
         def template = TEMPLATES[type]
+
+        if (!template || paramCount != template.paramCount) {
+            throw new WebApplicationException(Status.NOT_FOUND)
+        }
+
         new Message(template, name, from)
     }
 
