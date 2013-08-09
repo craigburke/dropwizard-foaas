@@ -100,4 +100,4 @@ task run(dependsOn: 'shadow', group: 'dropwizard',  description: "Run services")
     }
 }
 
-task stage(dependsOn: ['clean', 'jar'])
+task stage(dependsOn: ['clean', 'shadow'])
