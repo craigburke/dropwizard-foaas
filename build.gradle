@@ -99,3 +99,5 @@ task run(dependsOn: 'shadow', group: 'dropwizard',  description: "Run services")
         systemProperties = props
     }
 }
+
+task stage(dependsOn: ['clean', 'jar'])
